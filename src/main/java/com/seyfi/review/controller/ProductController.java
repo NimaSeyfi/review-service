@@ -1,9 +1,10 @@
 package com.seyfi.review.controller;
 
-import com.seyfi.review.model.entity.Comment;
-import com.seyfi.review.model.request.CreateCommentDto;
+import com.seyfi.review.model.entity.Product;
+import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.response.GeneralResponse;
-import com.seyfi.review.service.CommentService;
+import com.seyfi.review.service.ProductService;
+import com.seyfi.review.service.VoteService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +18,19 @@ import javax.validation.constraints.Positive;
 
 
 @RestController
-@RequestMapping("comment")
-public class CommentController {
+@RequestMapping("product")
+public class ProductController {
 
-    private static final Logger logger = LogManager.getLogger(CommentController.class);
+    private static final Logger logger = LogManager.getLogger(ProductController.class);
 
     @Autowired
-    private CommentService commentService;
+    private ProductService productService;
 
     @PostMapping()
-    public ResponseEntity<GeneralResponse> create(@Valid @RequestBody CreateCommentDto comment)
+    public ResponseEntity<GeneralResponse> create(@Valid @RequestBody Product product)
             throws Exception {
-        logger.info("Request for creating a comment : "+comment.toString());
-        GeneralResponse generalResponse = commentService.create(comment);
+        logger.info("Request for creating a product : "+product.toString());
+        GeneralResponse generalResponse = productService.create(product);
         logger.info("Response : "+ generalResponse.toString());
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
@@ -39,8 +40,8 @@ public class CommentController {
                                                     @NotNull(message = "id can't be null")
                                                         @PathVariable Integer id)
             throws Exception {
-        logger.info("Request for retrieve a comment : "+ id.toString());
-        GeneralResponse generalResponse = commentService.retrieve(id);
+        logger.info("Request for retrieve a product : "+ id.toString());
+        GeneralResponse generalResponse = productService.retrieve(id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
@@ -49,8 +50,8 @@ public class CommentController {
                                                     @NotNull(message = "id can't be null")
                                                     @PathVariable Integer id)
             throws Exception {
-        logger.info("Request for delete a comment : "+ id.toString());
-        GeneralResponse generalResponse = commentService.delete(id);
+        logger.info("Request for delete a product : "+ id.toString());
+        GeneralResponse generalResponse = productService.delete(id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
@@ -58,8 +59,8 @@ public class CommentController {
     @GetMapping("/list")
     public ResponseEntity<GeneralResponse> list()
             throws Exception {
-        logger.info("Request for retrieve all comments");
-        GeneralResponse generalResponse = commentService.list();
+        logger.info("Request for retrieve all products");
+        GeneralResponse generalResponse = productService.list();
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
