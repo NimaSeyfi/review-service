@@ -1,5 +1,9 @@
 package com.seyfi.review.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,7 +19,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@ToString
 public class Vote {
 
     @Id
@@ -23,15 +26,21 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull(message = "productId can't be null")
-    @Column(name = "product_id", nullable = false)
-    @Positive(message = "productId should be a positive number")
-    private Integer productId;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name="product_id", nullable=false)
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="productId")
+    @JsonIdentityReference(alwaysAsId=true)
+    private Product product;
 
     @NotNull(message = "userId can't be null")
     @Column(name = "user_id", nullable = false)
     @Positive(message = "userId should be a positive number")
     private Integer userId;
+
+    @NotNull(message = "isCustomer can't be null")
+    @Column(name = "is_customer", nullable = false)
+    private Boolean isCustomer ;
 
     @Min(value = 0, message = "minimum value of vote is 0")
     @Max(value = 10, message = "maximum value of vote is 10")

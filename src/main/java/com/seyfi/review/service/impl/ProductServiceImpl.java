@@ -1,12 +1,15 @@
 package com.seyfi.review.service.impl;
 
+import com.seyfi.review.dao.repository.CommentRepository;
 import com.seyfi.review.dao.repository.ProductRepository;
 import com.seyfi.review.dao.repository.VoteRepository;
 import com.seyfi.review.exception.ApiError;
 import com.seyfi.review.exception.ErrorObject;
+import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.entity.Product;
 import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.response.GeneralResponse;
+import com.seyfi.review.model.response.ReviewResponse;
 import com.seyfi.review.service.ProductService;
 import com.seyfi.review.service.VoteService;
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,6 +28,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
+
+    @Autowired
+    VoteRepository voteRepository;
 
     @Override
     public GeneralResponse create(Product product) throws Exception {
@@ -78,6 +86,51 @@ public class ProductServiceImpl implements ProductService {
                         optionalProduct.get(),
                         1);
             else{
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+            }
+        } catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public GeneralResponse review(Integer id) throws Exception {
+        try {
+            Product product;
+            List<Comment> comments;
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if (optionalProduct.isPresent()) {
+                product = optionalProduct.get();
+                if (!product.getIsVisible())
+                    throw new ApiError(ErrorObject.PRODUCT_INVISIBLE);
+
+                comments =
+                        commentRepository.
+                                findAllByIsApprovedTrueAndProductAndProductIsVisibleOrderByApprovedAtDesc(product,
+                        true);
+                if(comments.size() > 3)
+                    comments = comments.subList(0,3);
+
+                Double voteAverage = product.getVotes().stream()
+                        .mapToDouble(d -> d.getVote())
+                        .average()
+                        .orElse(0.0);
+
+                ReviewResponse reviewResponse = new ReviewResponse();
+                reviewResponse.setProductId(product.getProductId());
+                reviewResponse.setId(product.getId());
+                reviewResponse.setIsCommentable(product.getIsCommentable());
+                reviewResponse.setComments(comments);
+                reviewResponse.setCommentsCount(comments.size());
+                reviewResponse.setIsPublic(product.getIsPublic());
+                reviewResponse.setIsVisible(product.getIsVisible());
+                reviewResponse.setIsVotable(product.getIsVotable());
+                reviewResponse.setVotesCount(product.getVotes().size());
+                reviewResponse.setVotesAverage(voteAverage);
+                return new GeneralResponse(false,
+                        reviewResponse,
+                        1);
+            }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }
         } catch (NoSuchElementException e){

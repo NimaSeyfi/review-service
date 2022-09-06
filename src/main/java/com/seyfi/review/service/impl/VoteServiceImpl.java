@@ -1,11 +1,14 @@
 package com.seyfi.review.service.impl;
 
 import com.seyfi.review.dao.repository.CommentRepository;
+import com.seyfi.review.dao.repository.ProductRepository;
 import com.seyfi.review.dao.repository.VoteRepository;
 import com.seyfi.review.exception.ApiError;
 import com.seyfi.review.exception.ErrorObject;
 import com.seyfi.review.model.entity.Comment;
+import com.seyfi.review.model.entity.Product;
 import com.seyfi.review.model.entity.Vote;
+import com.seyfi.review.model.request.CreateVoteDto;
 import com.seyfi.review.model.request.UpdateCommentDto;
 import com.seyfi.review.model.response.GeneralResponse;
 import com.seyfi.review.service.CommentService;
@@ -16,8 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static com.seyfi.review.utils.functions.check_product_is_commentable;
+import static com.seyfi.review.utils.functions.check_product_is_votable;
 
 @Service
 public class VoteServiceImpl implements VoteService {
@@ -27,8 +34,25 @@ public class VoteServiceImpl implements VoteService {
     @Autowired
     VoteRepository voteRepository;
 
+    @Autowired
+    ProductRepository productRepository;
+
     @Override
-    public GeneralResponse create(Vote vote) throws Exception {
+    public GeneralResponse create(CreateVoteDto createVoteDto) throws Exception {
+        Product product;
+        try {
+            Optional<Product> optionalProduct = productRepository.findByProductId(createVoteDto.getProductId());
+            product = optionalProduct.get();
+        }catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
+        }
+        check_product_is_votable(product, createVoteDto);
+
+        Vote vote = new Vote();
+        vote.setUserId(createVoteDto.getUserId());
+        vote.setIsCustomer(createVoteDto.getIsCustomer());
+        vote.setVote(createVoteDto.getVote());
+        vote.setProduct(product);
         voteRepository.save(vote);
         return new GeneralResponse(false,
                 vote,
@@ -74,6 +98,26 @@ public class VoteServiceImpl implements VoteService {
                         optionalVote.get(),
                         1);
             else{
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+            }
+        } catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public GeneralResponse approve(Integer id) throws Exception {
+        try {
+            Optional<Vote> optionalVote = voteRepository.findById(id);
+            if (optionalVote.isPresent()) {
+                Vote vote = optionalVote.get();
+                vote.setApprovedAt(new Date());
+                vote.setIsApproved(true);
+                voteRepository.save(vote);
+                return new GeneralResponse(false,
+                        vote,
+                        1);
+            }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }
         } catch (NoSuchElementException e){
