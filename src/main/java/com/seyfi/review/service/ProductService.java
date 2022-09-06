@@ -11,5 +11,6 @@ public interface ProductService {
     GeneralResponse delete(Integer id);
     GeneralResponse list();
     GeneralResponse retrieve(Integer id) throws Exception;
+    GeneralResponse review(Integer id) throws Exception;
 
 }

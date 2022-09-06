@@ -63,4 +63,13 @@ public class CommentController {
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<GeneralResponse> approve(@Positive(message = "id should be a positive number")
+                                                  @NotNull(message = "id can't be null")
+                                                  @PathVariable Integer id)
+            throws Exception {
+        logger.info("Request for approve a comment : "+ id.toString());
+        GeneralResponse generalResponse = commentService.approve(id);
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
+    }
 }

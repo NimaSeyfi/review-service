@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static com.seyfi.review.utils.functions.check_product_is_commentable;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -42,9 +42,13 @@ public class CommentServiceImpl implements CommentService {
             Optional<Product> optionalProduct = productRepository.findByProductId(createCommentDto.getProductId());
             product = optionalProduct.get();
         }
+
+        check_product_is_commentable(product, createCommentDto);
+
         Comment comment = new Comment();
         comment.setContent(createCommentDto.getContent());
         comment.setUserId(createCommentDto.getUserId());
+        comment.setIsCustomer(createCommentDto.getIsCustomer());
         comment.setProduct(product);
         commentRepository.save(comment);
         return new GeneralResponse(false,
@@ -91,6 +95,26 @@ public class CommentServiceImpl implements CommentService {
                         optionalComment.get(),
                         1);
             else{
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+            }
+        } catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public GeneralResponse approve(Integer id) throws Exception {
+        try {
+            Optional<Comment> optionalComment = commentRepository.findById(id);
+            if (optionalComment.isPresent()) {
+                Comment comment = optionalComment.get();
+                comment.setApprovedAt(new Date());
+                comment.setIsApproved(true);
+                commentRepository.save(comment);
+                return new GeneralResponse(false,
+                        comment,
+                        1);
+            }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }
         } catch (NoSuchElementException e){

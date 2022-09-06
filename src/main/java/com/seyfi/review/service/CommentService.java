@@ -12,5 +12,6 @@ public interface CommentService {
     GeneralResponse delete(Integer id);
     GeneralResponse list();
     GeneralResponse retrieve(Integer id) throws Exception;
+    GeneralResponse approve(Integer id) throws Exception;
 
 }

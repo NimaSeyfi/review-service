@@ -1,6 +1,7 @@
 package com.seyfi.review.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,6 +27,7 @@ public class Comment {
     private Integer id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="product_id", nullable=false)
     private Product product;
 
@@ -46,6 +48,10 @@ public class Comment {
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved = false;
+
+    @NotNull(message = "isCustomer can't be null")
+    @Column(name = "is_customer", nullable = false)
+    private Boolean isCustomer ;
 
     @NotNull(message = "message content can't be null")
     @NotBlank(message = "content can't be blank")

@@ -46,7 +46,12 @@ public class Product {
     private Boolean isPublic = true;
 
     @JsonIgnore
-    @OneToMany(mappedBy="product")
+    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
+    private List<Vote> votes = new ArrayList<>();
 
 }

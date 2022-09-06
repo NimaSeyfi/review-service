@@ -64,4 +64,15 @@ public class ProductController {
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/review")
+    public ResponseEntity<GeneralResponse> review(@Positive(message = "id should be a positive number")
+                                                    @NotNull(message = "id can't be null")
+                                                    @PathVariable Integer id)
+            throws Exception {
+        logger.info("Request for retrieve a product review : "+ id.toString());
+        GeneralResponse generalResponse = productService.review(id);
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
+    }
+
+
 }
