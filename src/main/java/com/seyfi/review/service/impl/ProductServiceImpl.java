@@ -18,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -106,8 +104,18 @@ public class ProductServiceImpl implements ProductService {
                 if (!product.getIsVisible())
                     throw new ApiError(ErrorObject.PRODUCT_INVISIBLE);
 
-                comments = commentRepository.findAllByIsApprovedTrueAndProductAndProductIsVisible(product,
+                comments =
+                        commentRepository.
+                                findAllByIsApprovedTrueAndProductAndProductIsVisibleOrderByApprovedAtDesc(product,
                         true);
+                if(comments.size() > 3)
+                    comments = comments.subList(0,3);
+
+                Double voteAverage = product.getVotes().stream()
+                        .mapToDouble(d -> d.getVote())
+                        .average()
+                        .orElse(0.0);
+
                 ReviewResponse reviewResponse = new ReviewResponse();
                 reviewResponse.setProductId(product.getProductId());
                 reviewResponse.setId(product.getId());
@@ -118,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
                 reviewResponse.setIsVisible(product.getIsVisible());
                 reviewResponse.setIsVotable(product.getIsVotable());
                 reviewResponse.setVotesCount(product.getVotes().size());
-                reviewResponse.setVotesAverage(0.0);
+                reviewResponse.setVotesAverage(voteAverage);
                 return new GeneralResponse(false,
                         reviewResponse,
                         1);

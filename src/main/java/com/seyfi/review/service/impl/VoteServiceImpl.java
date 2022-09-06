@@ -40,13 +40,12 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public GeneralResponse create(CreateVoteDto createVoteDto) throws Exception {
         Product product;
-        if (! productRepository.existsByProductId(createVoteDto.getProductId())){
-            throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
-        } else {
+        try {
             Optional<Product> optionalProduct = productRepository.findByProductId(createVoteDto.getProductId());
             product = optionalProduct.get();
+        }catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
         }
-
         check_product_is_votable(product, createVoteDto);
 
         Vote vote = new Vote();

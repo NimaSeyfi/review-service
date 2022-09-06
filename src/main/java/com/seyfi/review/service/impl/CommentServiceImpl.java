@@ -36,11 +36,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public GeneralResponse create(CreateCommentDto createCommentDto) throws Exception {
         Product product;
-        if (! productRepository.existsByProductId(createCommentDto.getProductId())){
-            throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
-        } else {
+        try {
             Optional<Product> optionalProduct = productRepository.findByProductId(createCommentDto.getProductId());
             product = optionalProduct.get();
+        }catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
         }
 
         check_product_is_commentable(product, createCommentDto);

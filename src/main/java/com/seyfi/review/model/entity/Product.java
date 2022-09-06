@@ -19,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "product_table")
-@ToString
 @EqualsAndHashCode
 public class Product {
 
@@ -48,7 +47,6 @@ public class Product {
     @JsonIgnore
     @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
-
 
     @JsonIgnore
     @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
