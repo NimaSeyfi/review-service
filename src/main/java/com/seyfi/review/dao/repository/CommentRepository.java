@@ -10,6 +10,6 @@ public interface CommentRepository extends CrudRepository<Comment, Integer> {
 
     List<Comment> findAllByIsApprovedTrueAndProduct(Product product);
 
-    List<Comment> findAllByIsApprovedTrueAndProductAndProductIsVisibleOrderByApprovedAtDesc(Product product, Boolean product_isVisible);
-
+    List<Comment> findAllByIsApprovedTrueAndProductAndProductIsVisibleOrderByCreatedAtDesc(Product product,
+                                                                                           Boolean product_isVisible);
 }

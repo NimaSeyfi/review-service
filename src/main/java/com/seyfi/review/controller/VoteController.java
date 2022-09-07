@@ -58,10 +58,15 @@ public class VoteController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<GeneralResponse> list()
+    public ResponseEntity<GeneralResponse> list(@Positive(message = "size should be a positive number")
+                                                    @NotNull(message = "size can't be null")
+                                                    @RequestParam Integer size,
+                                                @Positive(message = "sync should be a positive number")
+                                                    @NotNull(message = "sync can't be null")
+                                                    @RequestParam Integer sync)
             throws Exception {
         logger.info("Request for retrieve all votes");
-        GeneralResponse generalResponse = voteService.list();
+        GeneralResponse generalResponse = voteService.list(size, sync);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 

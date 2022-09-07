@@ -106,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
 
                 comments =
                         commentRepository.
-                                findAllByIsApprovedTrueAndProductAndProductIsVisibleOrderByApprovedAtDesc(product,
+                                findAllByIsApprovedTrueAndProductAndProductIsVisibleOrderByCreatedAtDesc(product,
                         true);
                 if(comments.size() > 3)
                     comments = comments.subList(0,3);

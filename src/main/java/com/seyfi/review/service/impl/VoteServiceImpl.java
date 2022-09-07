@@ -48,7 +48,13 @@ public class VoteServiceImpl implements VoteService {
         }
         check_product_is_votable(product, createVoteDto);
 
-        Vote vote = new Vote();
+        Vote vote;
+        try {
+            Optional<Vote> optionalVote = voteRepository.findByUserIdAndProduct(createVoteDto.getUserId(), product);
+            vote = optionalVote.get();
+        }catch (NoSuchElementException e){
+            vote = new Vote();
+        }
         vote.setUserId(createVoteDto.getUserId());
         vote.setIsCustomer(createVoteDto.getIsCustomer());
         vote.setVote(createVoteDto.getVote());
@@ -77,9 +83,10 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public GeneralResponse list() {
+    public GeneralResponse list(Integer size, Integer sync) {
         try {
             ArrayList<Vote> votes = (ArrayList<Vote>) voteRepository.findAll();
+
             return new GeneralResponse(false,
                     votes,
                     votes.size());
