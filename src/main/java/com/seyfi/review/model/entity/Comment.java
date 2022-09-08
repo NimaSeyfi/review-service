@@ -1,7 +1,6 @@
 package com.seyfi.review.model.entity;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,7 +27,7 @@ public class Comment {
     @JoinColumn(name="product_id", nullable=false)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="productId")
     @JsonIdentityReference(alwaysAsId=true)
-    private Product product;
+    private ProductDetail productDetail;
 
     @NotNull(message = "userId can't be null")
     @Column(name = "user_id", nullable = false)

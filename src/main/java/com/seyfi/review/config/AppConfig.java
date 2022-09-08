@@ -50,46 +50,4 @@ public class AppConfig {
 
         return restTemplate;
     }
-
-//    @Bean
-//    public ErrorAttributes errorAttributes() {
-//        return new DefaultErrorAttributes() {
-//            @Override
-//            public Map<String, Object> getErrorAttributes(WebRequest requestAttributes, ErrorAttributeOptions includeStackTrace) {
-//                Map<String, Object> errorAttributes = super.getErrorAttributes(requestAttributes, includeStackTrace);
-//                String statusCode=errorAttributes.get("status").toString();
-//
-//                errorAttributes.remove("timestamp");
-//                errorAttributes.remove("status");
-//                errorAttributes.remove("path");
-//                errorAttributes.remove("error");
-//
-//                Throwable   error = getError(requestAttributes);
-//                String  errMessage=super.getMessage(requestAttributes,error);
-//                errorAttributes.put("error", true);
-//                logger.error(error!=null ? error.getMessage():null);
-//                if(statusCode!=null && statusCode.equalsIgnoreCase("404")){
-//                    errorAttributes.put("message", ResponseStatus.URL_NOT_FOUND.getDescription());
-//                    errorAttributes.put("result_number", ResponseStatus.URL_NOT_FOUND.getCode());
-//
-//                }else if(error instanceof BusinessException){
-//                    BusinessException exception= (BusinessException) error;
-//                    errorAttributes.put("message", exception.getMessage());
-//                    errorAttributes.put("result_number", exception.getResult_number());
-//                }
-//               else if(error instanceof HttpClientErrorException.BadRequest) {
-//                    errorAttributes.put("message", ResponseStatus.BAD_REQUEST.getDescription());
-//                    errorAttributes.put("result_number", ResponseStatus.BAD_REQUEST.getCode());
-//
-//                 }
-//                else {
-//                    errorAttributes.put("message",error!=null ? error.getMessage(): ResponseStatus.INTERNAL_ERROR.getDescription());
-//                    errorAttributes.put("result_number", ResponseStatus.INTERNAL_ERROR.getCode());
-//                }
-//                return errorAttributes;
-//
-//            }
-//        };
-//    }
-
 }

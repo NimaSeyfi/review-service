@@ -63,7 +63,7 @@ public class VoteController {
                                                     @RequestParam Integer size,
                                                 @Positive(message = "sync should be a positive number")
                                                     @NotNull(message = "sync can't be null")
-                                                    @RequestParam Integer sync)
+                                                    @RequestParam Long sync)
             throws Exception {
         logger.info("Request for retrieve all votes");
         GeneralResponse generalResponse = voteService.list(size, sync);

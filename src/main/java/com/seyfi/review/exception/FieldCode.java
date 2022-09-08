@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum FieldCode {
-    UNKNOWN_FIELD("undefinedId",10111001),
+    UNKNOWN_FIELD("undefinedId",10111000),
     ID("id",10111001),
     USER_ID("userId",10111002),
     PRODUCT_ID("productId",10111003),

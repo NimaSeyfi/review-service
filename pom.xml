@@ -12,7 +12,7 @@
 	<artifactId>review</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>review</name>
-	<description>A review service for commenting and rating on products</description>
+	<description>A review service for commenting and rating on productDetails</description>
 	<properties>
 		<java.version>14</java.version>
 	</properties>

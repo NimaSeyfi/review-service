@@ -10,7 +10,7 @@ public interface CommentService {
     GeneralResponse create(CreateCommentDto createCommentDto  ) throws Exception;
     GeneralResponse update(UpdateCommentDto updateCommentDto, Integer id) throws Exception;
     GeneralResponse delete(Integer id);
-    GeneralResponse list();
+    GeneralResponse list(Integer size, Long sync);
     GeneralResponse retrieve(Integer id) throws Exception;
     GeneralResponse approve(Integer id) throws Exception;
 

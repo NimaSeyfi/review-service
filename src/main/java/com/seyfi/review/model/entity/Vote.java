@@ -31,7 +31,7 @@ public class Vote {
     @JoinColumn(name="product_id", nullable=false)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="productId")
     @JsonIdentityReference(alwaysAsId=true)
-    private Product product;
+    private ProductDetail productDetail;
 
     @NotNull(message = "userId can't be null")
     @Column(name = "user_id", nullable = false)
@@ -53,6 +53,7 @@ public class Vote {
     private Date createdAt;
 
     @Column(name = "updated_at", nullable = true)
+    @UpdateTimestamp
     private Date updatedAt;
 
     @Column(name = "approved_at", nullable = true)

@@ -56,10 +56,15 @@ public class CommentController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<GeneralResponse> list()
+    public ResponseEntity<GeneralResponse> list(@Positive(message = "size should be a positive number")
+                                                    @NotNull(message = "size can't be null")
+                                                    @RequestParam Integer size,
+                                                @Positive(message = "sync should be a positive number")
+                                                    @NotNull(message = "sync can't be null")
+                                                    @RequestParam Long sync)
             throws Exception {
         logger.info("Request for retrieve all comments");
-        GeneralResponse generalResponse = commentService.list();
+        GeneralResponse generalResponse = commentService.list(size, sync);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 

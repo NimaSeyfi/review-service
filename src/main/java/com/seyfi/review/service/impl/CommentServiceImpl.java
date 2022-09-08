@@ -1,23 +1,26 @@
 package com.seyfi.review.service.impl;
 
-import com.seyfi.review.controller.CommentController;
 import com.seyfi.review.dao.repository.CommentRepository;
-import com.seyfi.review.dao.repository.ProductRepository;
+import com.seyfi.review.dao.repository.ProductDetailRepository;
 import com.seyfi.review.exception.ApiError;
 import com.seyfi.review.exception.ErrorObject;
 import com.seyfi.review.model.entity.Comment;
-import com.seyfi.review.model.entity.Product;
+import com.seyfi.review.model.entity.ProductDetail;
+import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.request.CreateCommentDto;
 import com.seyfi.review.model.request.UpdateCommentDto;
+import com.seyfi.review.model.response.CommentPageResponse;
 import com.seyfi.review.model.response.GeneralResponse;
+import com.seyfi.review.model.response.VotePageResponse;
 import com.seyfi.review.service.CommentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.*;
 
 import static com.seyfi.review.utils.functions.check_product_is_commentable;
@@ -31,25 +34,25 @@ public class CommentServiceImpl implements CommentService {
     CommentRepository commentRepository;
 
     @Autowired
-    ProductRepository productRepository;
+    ProductDetailRepository productDetailRepository;
 
     @Override
     public GeneralResponse create(CreateCommentDto createCommentDto) throws Exception {
-        Product product;
+        ProductDetail productDetail;
         try {
-            Optional<Product> optionalProduct = productRepository.findByProductId(createCommentDto.getProductId());
-            product = optionalProduct.get();
+            Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(createCommentDto.getProductId());
+            productDetail = optionalProduct.get();
         }catch (NoSuchElementException e){
             throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
         }
 
-        check_product_is_commentable(product, createCommentDto);
+        check_product_is_commentable(productDetail, createCommentDto);
 
         Comment comment = new Comment();
         comment.setContent(createCommentDto.getContent());
         comment.setUserId(createCommentDto.getUserId());
         comment.setIsCustomer(createCommentDto.getIsCustomer());
-        comment.setProduct(product);
+        comment.setProductDetail(productDetail);
         commentRepository.save(comment);
         return new GeneralResponse(false,
                 comment,
@@ -74,11 +77,40 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public GeneralResponse list() {
+    public GeneralResponse list(Integer size, Long sync) {
         try {
-            ArrayList<Comment> comments = (ArrayList<Comment>) commentRepository.findAll();
+            ArrayList<Comment> comments;
+            CommentPageResponse commentPageResponse = new CommentPageResponse();
+            Timestamp timestamp;
+            Long timestamp_responsed;
+            if(sync == 0){
+                comments = (ArrayList<Comment>) commentRepository.findAllByOrderByCreatedAtDesc(PageRequest.ofSize(size));
+                if (comments.size() != 0){
+                    Date sync_date = comments.get(comments.size()-1).getCreatedAt();
+                    timestamp = new Timestamp(sync_date.getTime());
+                    timestamp_responsed = timestamp.getTime();
+                } else {
+                    timestamp_responsed = null;
+                }
+            } else {
+                timestamp = new Timestamp(sync);
+                Date date = new Date(timestamp.getTime());
+                comments = (ArrayList<Comment>) commentRepository.findAllByCreatedAtBeforeOrderByCreatedAtDesc(date,
+                        PageRequest.ofSize(size));
+                if (comments.size() != 0){
+                    Date sync_date = comments.get(comments.size()-1).getCreatedAt();
+                    timestamp = new Timestamp(sync_date.getTime());
+                    timestamp_responsed = timestamp.getTime();
+                } else {
+                    timestamp_responsed = null;
+                }
+            }
+            commentPageResponse.setComments(comments);
+            commentPageResponse.getPage().put("allCount", commentRepository.count());
+            commentPageResponse.getPage().put("size", size);
+            commentPageResponse.getPage().put("sync", timestamp_responsed);
             return new GeneralResponse(false,
-                    comments,
+                    commentPageResponse,
                     10200000);
         } catch (Exception e){
             logger.error(e);

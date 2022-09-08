@@ -11,7 +11,7 @@ public interface VoteService {
     GeneralResponse create(CreateVoteDto createVoteDto) throws Exception;
     GeneralResponse update(Vote vote, Integer id) throws Exception;
     GeneralResponse delete(Integer id);
-    GeneralResponse list(Integer size, Integer sync);
+    GeneralResponse list(Integer size, Long sync);
     GeneralResponse retrieve(Integer id) throws Exception;
     GeneralResponse approve(Integer id) throws Exception;
 

@@ -15,6 +15,9 @@ public enum ErrorObject{
     PRODUCT_IS_NOT_VOTABLE(10400008, "Voting is off for this Product", HttpStatus.BAD_REQUEST),
     PRODUCT_ONLY_CUSTOMER_CAN_COMMENT(10400009, "Only customers of this product can comment", HttpStatus.BAD_REQUEST),
     PRODUCT_ONLY_CUSTOMER_CAN_VOTE(10400010, "Only customers of this product can vote", HttpStatus.BAD_REQUEST),
+    INVALID_TYPE(10400011, "Invalid Type", HttpStatus.BAD_REQUEST),
+    MISSING_PARAMETER(10400012, "Missing Parameter", HttpStatus.BAD_REQUEST),
+    METHOD_NOT_ALLOWED(10405001, "Method not allowed", HttpStatus.METHOD_NOT_ALLOWED),
     RESOURCE_NOT_FOUND(10404001, "Not Found", HttpStatus.NOT_FOUND);
 
     private Integer errorCode;

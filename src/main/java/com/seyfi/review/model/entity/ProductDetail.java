@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -18,9 +19,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "product_table")
+@Table(name = "product_detail_table")
 @EqualsAndHashCode
-public class Product {
+public class ProductDetail {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -33,23 +34,31 @@ public class Product {
     private Integer productId;
 
     @Column(name = "is_visible", nullable = false)
-    private Boolean isVisible = true;
+    private Boolean isVisible;
 
     @Column(name = "is_commentable", nullable = false)
-    private Boolean isCommentable = true;
+    private Boolean isCommentable;
 
     @Column(name = "is_votable", nullable = false)
-    private Boolean isVotable = true;
+    private Boolean isVotable;
 
     @Column(name = "is_public", nullable = false)
-    private Boolean isPublic = true;
+    private Boolean isPublic;
+
+    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    private Date createdAt;
+
+    @Column(name = "updated_at", nullable = true)
+    @UpdateTimestamp
+    private Date updatedAt;
 
     @JsonIgnore
-    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="productDetail", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="productDetail", cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
 
 }
