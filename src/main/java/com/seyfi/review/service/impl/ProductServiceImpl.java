@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.save(product);
             return new GeneralResponse(false,
                     product,
-                    1);
+                    10200000);
         } else {
             throw new ApiError(ErrorObject.PRODUCT_EXIST);
         }
@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.deleteById(id);
             return new GeneralResponse(false,
                     "Product deleted successfully.",
-                    1);
+                    10200000);
         } catch (DataAccessException e){
             throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
         }
@@ -70,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
             ArrayList<Product> products = (ArrayList<Product>) productRepository.findAll();
             return new GeneralResponse(false,
                     products,
-                    products.size());
+                    10200000);
         } catch (Exception e){
             logger.error(e);
             throw new ApiError(ErrorObject.INTERNAL_ERROR);
@@ -84,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
             if (optionalProduct.isPresent())
                 return new GeneralResponse(false,
                         optionalProduct.get(),
-                        1);
+                        10200000);
             else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }
@@ -98,6 +98,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             Product product;
             List<Comment> comments;
+            List<Vote> votes;
             Optional<Product> optionalProduct = productRepository.findById(id);
             if (optionalProduct.isPresent()) {
                 product = optionalProduct.get();
@@ -111,7 +112,8 @@ public class ProductServiceImpl implements ProductService {
                 if(comments.size() > 3)
                     comments = comments.subList(0,3);
 
-                Double voteAverage = product.getVotes().stream()
+                votes = voteRepository.findAllByIsApprovedTrue();
+                Double voteAverage = votes.stream()
                         .mapToDouble(d -> d.getVote())
                         .average()
                         .orElse(0.0);
@@ -125,11 +127,11 @@ public class ProductServiceImpl implements ProductService {
                 reviewResponse.setIsPublic(product.getIsPublic());
                 reviewResponse.setIsVisible(product.getIsVisible());
                 reviewResponse.setIsVotable(product.getIsVotable());
-                reviewResponse.setVotesCount(product.getVotes().size());
+                reviewResponse.setVotesCount(votes.size());
                 reviewResponse.setVotesAverage(voteAverage);
                 return new GeneralResponse(false,
                         reviewResponse,
-                        1);
+                        10200000);
             }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }

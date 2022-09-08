@@ -21,7 +21,7 @@ public class Comment {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
@@ -40,6 +40,7 @@ public class Comment {
     private Date createdAt;
 
     @Column(name = "updated_at", nullable = true)
+    @UpdateTimestamp
     private Date updatedAt;
 
     @Column(name = "approved_at", nullable = true)

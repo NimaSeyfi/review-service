@@ -62,7 +62,7 @@ public class VoteServiceImpl implements VoteService {
         voteRepository.save(vote);
         return new GeneralResponse(false,
                 vote,
-                1);
+                10200000);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class VoteServiceImpl implements VoteService {
             voteRepository.deleteById(id);
             return new GeneralResponse(false,
                     "Vote deleted successfully.",
-                    1);
+                    10200000);
         } catch (DataAccessException e){
             throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
         }
@@ -89,7 +89,7 @@ public class VoteServiceImpl implements VoteService {
 
             return new GeneralResponse(false,
                     votes,
-                    votes.size());
+                    10200000);
         } catch (Exception e){
             logger.error(e);
             throw new ApiError(ErrorObject.INTERNAL_ERROR);
@@ -103,7 +103,7 @@ public class VoteServiceImpl implements VoteService {
             if (optionalVote.isPresent())
                 return new GeneralResponse(false,
                         optionalVote.get(),
-                        1);
+                        10200000);
             else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }
@@ -123,7 +123,7 @@ public class VoteServiceImpl implements VoteService {
                 voteRepository.save(vote);
                 return new GeneralResponse(false,
                         vote,
-                        1);
+                        10200000);
             }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }

@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
         return new GeneralResponse(false,
                 comment,
-                1);
+                10200000);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
             commentRepository.deleteById(id);
             return new GeneralResponse(false,
                     "Comment deleted successfully.",
-                    1);
+                    10200000);
         } catch (DataAccessException e){
             throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
         }
@@ -79,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
             ArrayList<Comment> comments = (ArrayList<Comment>) commentRepository.findAll();
             return new GeneralResponse(false,
                     comments,
-                    comments.size());
+                    10200000);
         } catch (Exception e){
             logger.error(e);
             throw new ApiError(ErrorObject.INTERNAL_ERROR);
@@ -93,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
             if (optionalComment.isPresent())
                 return new GeneralResponse(false,
                         optionalComment.get(),
-                        1);
+                        10200000);
             else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }
@@ -113,7 +113,7 @@ public class CommentServiceImpl implements CommentService {
                 commentRepository.save(comment);
                 return new GeneralResponse(false,
                         comment,
-                        1);
+                        10200000);
             }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
             }

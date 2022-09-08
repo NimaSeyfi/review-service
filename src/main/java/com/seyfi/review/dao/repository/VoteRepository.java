@@ -16,4 +16,6 @@ public interface VoteRepository extends CrudRepository<Vote, Integer> {
                                           @Positive(message = "userId should be a positive number") Integer userId,
                                           Product product);
 
+    List<Vote> findAllByIsApprovedTrue();
+
 }

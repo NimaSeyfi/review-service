@@ -21,7 +21,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
    protected ResponseEntity<GeneralResponse> handleApiError(ApiError error) {
        GeneralResponse generalResponse = new GeneralResponse();
        generalResponse.setError(true);
-       generalResponse.setResult_number(error.getError().getErrorCode());
+       generalResponse.setResult_code(error.getError().getErrorCode());
        generalResponse.setMessage(error.getError().getErrorMessage());
        ResponseEntity<GeneralResponse> responseEntity
                = new ResponseEntity<GeneralResponse>(generalResponse, error.getError().getStatus());
@@ -32,7 +32,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<GeneralResponse> handleValidationError(ValidationException error) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse.setError(true);
-        generalResponse.setResult_number(ErrorObject.INVALID_INPUT.getErrorCode());
+        generalResponse.setResult_code(ErrorObject.INVALID_INPUT.getErrorCode());
         HashMap<String, String> errors = new HashMap<>();
         generalResponse.setMessage(error.getLocalizedMessage());
         ResponseEntity<GeneralResponse> responseEntity
@@ -49,12 +49,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse.setError(true);
-        generalResponse.setResult_number(ErrorObject.INVALID_INPUT.getErrorCode());
+        generalResponse.setResult_code(ErrorObject.INVALID_INPUT.getErrorCode());
 
-        HashMap<String, String> error_dic = new HashMap<>();
+        HashMap<Integer, String> error_dic = new HashMap<>();
         BindingResult bindingResult = ex.getBindingResult();
         for(FieldError error : bindingResult.getFieldErrors()) {
-            error_dic.put(error.getField(), error.getDefaultMessage());
+            Integer field_code = FieldCode.get_code_by_name(error.getField());
+            error_dic.put(field_code, error.getDefaultMessage());
         }
         generalResponse.setMessage(error_dic);
         return new ResponseEntity<Object>(generalResponse, ErrorObject.INVALID_INPUT.getStatus());
@@ -67,7 +68,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request){
         GeneralResponse generalResponse = new GeneralResponse();
         generalResponse.setError(true);
-        generalResponse.setResult_number(ErrorObject.BAD_REQUEST.getErrorCode());
+        generalResponse.setResult_code(ErrorObject.BAD_REQUEST.getErrorCode());
         generalResponse.setMessage(ErrorObject.BAD_REQUEST.getErrorMessage());
         ResponseEntity<Object> responseEntity
                 = new ResponseEntity<Object>(generalResponse, ErrorObject.BAD_REQUEST.getStatus());
