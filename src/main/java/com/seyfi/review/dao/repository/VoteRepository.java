@@ -12,10 +12,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface VoteRepository extends CrudRepository<Vote, Integer> {
+public interface VoteRepository extends CrudRepository<Vote, Long> {
 
     Optional<Vote> findByUserIdAndProductDetail(@NotNull(message = "userId can't be null")
-                                          @Positive(message = "userId should be a positive number") Integer userId,
+                                          @Positive(message = "userId should be a positive number") Long userId,
                                           ProductDetail productDetail);
 
     List<Vote> findAllByOrderByCreatedAtDesc(Pageable pageable);

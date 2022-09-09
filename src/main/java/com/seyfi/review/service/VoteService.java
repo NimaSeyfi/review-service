@@ -10,10 +10,10 @@ import com.seyfi.review.model.response.GeneralResponse;
 public interface VoteService {
 
     GeneralResponse create(CreateVoteDto createVoteDto) throws Exception;
-    GeneralResponse update(UpdateVoteDto updateVoteDto, Integer id) throws Exception;
-    GeneralResponse delete(Integer id);
+    GeneralResponse update(UpdateVoteDto updateVoteDto, Long id) throws Exception;
+    GeneralResponse delete(Long id);
     GeneralResponse list(Integer size, Long sync);
-    GeneralResponse retrieve(Integer id) throws Exception;
-    GeneralResponse approve(Integer id) throws Exception;
+    GeneralResponse retrieve(Long id) throws Exception;
+    GeneralResponse approve(Long id) throws Exception;
 
 }

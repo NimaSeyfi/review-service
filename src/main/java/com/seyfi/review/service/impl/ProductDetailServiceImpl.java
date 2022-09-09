@@ -55,7 +55,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public GeneralResponse update(UpdateProductDetailDto updateProductDetailDto, Integer id) throws Exception {
+    public GeneralResponse update(UpdateProductDetailDto updateProductDetailDto, Long id) throws Exception {
         try {
             Optional<ProductDetail> optionalProductDetail = productDetailRepository.findByProductId(id);
             if (!optionalProductDetail.isEmpty()) {
@@ -86,7 +86,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public GeneralResponse delete(Integer id) {
+    public GeneralResponse delete(Long id) {
         try {
             Optional<ProductDetail> productDetail = productDetailRepository.findByProductId(id);
             if(!productDetail.isEmpty()){
@@ -132,7 +132,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                 }
             }
             producetDetailPageResponse.setProductDetails(productDetails);
-            producetDetailPageResponse.getPage().put("allCount", commentRepository.count());
+            producetDetailPageResponse.getPage().put("allCount", productDetailRepository.count());
             producetDetailPageResponse.getPage().put("size", size);
             producetDetailPageResponse.getPage().put("sync", timestamp_responsed);
             return new GeneralResponse(false,
@@ -145,7 +145,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public GeneralResponse retrieve(Integer id) throws Exception {
+    public GeneralResponse retrieve(Long id) throws Exception {
         try {
             Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
             if (!optionalProduct.isEmpty())
@@ -161,7 +161,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public GeneralResponse review(Integer id) throws Exception {
+    public GeneralResponse review(Long id) throws Exception {
         try {
             ProductDetail productDetail;
             List<Comment> comments;
@@ -200,7 +200,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                 reviewResponse.setId(productDetail.getId());
                 reviewResponse.setIsCommentable(productDetail.getIsCommentable());
                 reviewResponse.setComments(comments);
-                reviewResponse.setCommentsCount(comments.size());
+                reviewResponse.setCommentsCount(productDetail.getComments().size());
                 reviewResponse.setIsPublic(productDetail.getIsPublic());
                 reviewResponse.setIsVisible(productDetail.getIsVisible());
                 reviewResponse.setIsVotable(productDetail.getIsVotable());
@@ -218,7 +218,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public GeneralResponse comments(Integer id, Integer size, Long sync) {
+    public GeneralResponse comments(Long id, Integer size, Long sync) {
         ProductDetail productDetail;
         Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
         if (!optionalProduct.isEmpty())
@@ -264,7 +264,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             }
         }
         commentPageResponse.setComments(comments);
-        commentPageResponse.getPage().put("allCount", comments.size());
+        commentPageResponse.getPage().put("allCount", productDetail.getComments().size());
         commentPageResponse.getPage().put("size", size);
         commentPageResponse.getPage().put("sync", timestamp_responsed);
         return new GeneralResponse(false,
@@ -274,7 +274,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
 
     @Override
-    public GeneralResponse votes(Integer id, Integer size, Long sync) {
+    public GeneralResponse votes(Long id, Integer size, Long sync) {
         ProductDetail productDetail;
         Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
         if (!optionalProduct.isEmpty())
@@ -307,6 +307,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                 votes = (ArrayList<Vote>) voteRepository.findAllByProductDetailAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
                         date,
                         PageRequest.ofSize(size));
+
             else
                 votes = (ArrayList<Vote>) voteRepository.findAllByProductDetailAndIsCustomerTrueAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
                         date,
@@ -320,7 +321,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             }
         }
         votePageResponse.setVotes(votes);
-        votePageResponse.getPage().put("allCount", votes.size());
+        votePageResponse.getPage().put("allCount", productDetail.getVotes().size());
         votePageResponse.getPage().put("size", size);
         votePageResponse.getPage().put("sync", timestamp_responsed);
         return new GeneralResponse(false,

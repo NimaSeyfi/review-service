@@ -8,12 +8,12 @@ import com.seyfi.review.model.response.GeneralResponse;
 public interface ProductDetailService {
 
     GeneralResponse create(CreateProductDetailDto createProductDetailDto) throws Exception;
-    GeneralResponse update(UpdateProductDetailDto updateProductDetailDto, Integer id) throws Exception;
-    GeneralResponse delete(Integer id);
+    GeneralResponse update(UpdateProductDetailDto updateProductDetailDto, Long id) throws Exception;
+    GeneralResponse delete(Long id);
     GeneralResponse list(Integer size, Long sync);
-    GeneralResponse retrieve(Integer id) throws Exception;
-    GeneralResponse review(Integer id) throws Exception;
-    GeneralResponse comments(Integer id, Integer size, Long sync);
-    GeneralResponse votes(Integer id, Integer size, Long sync);
+    GeneralResponse retrieve(Long id) throws Exception;
+    GeneralResponse review(Long id) throws Exception;
+    GeneralResponse comments(Long id, Integer size, Long sync);
+    GeneralResponse votes(Long id, Integer size, Long sync);
 
 }

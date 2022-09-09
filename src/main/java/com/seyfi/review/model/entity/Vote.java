@@ -24,10 +24,9 @@ public class Vote {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name="product_id", nullable=false)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="productId")
     @JsonIdentityReference(alwaysAsId=true)
@@ -36,7 +35,7 @@ public class Vote {
     @NotNull(message = "userId can't be null")
     @Column(name = "user_id", nullable = false)
     @Positive(message = "userId should be a positive number")
-    private Integer userId;
+    private Long userId;
 
     @NotNull(message = "isCustomer can't be null")
     @Column(name = "is_customer", nullable = false)
