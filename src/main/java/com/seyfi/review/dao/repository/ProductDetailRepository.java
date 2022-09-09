@@ -15,6 +15,8 @@ public interface ProductDetailRepository extends CrudRepository<ProductDetail, I
 
     Optional<ProductDetail> findByProductId(Integer id);
 
+    Long deleteByProductId(Integer id);
+
     List<ProductDetail> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<ProductDetail> findAllByCreatedAtBeforeOrderByCreatedAtDesc(Date createdAt, Pageable page);

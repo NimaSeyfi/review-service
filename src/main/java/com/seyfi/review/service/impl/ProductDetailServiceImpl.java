@@ -57,7 +57,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public GeneralResponse update(UpdateProductDetailDto updateProductDetailDto, Integer id) throws Exception {
         try {
-            Optional<ProductDetail> optionalProductDetail = productDetailRepository.findById(id);
+            Optional<ProductDetail> optionalProductDetail = productDetailRepository.findByProductId(id);
             if (!optionalProductDetail.isEmpty()) {
                 ProductDetail productDetail = optionalProductDetail.get();
                 if (updateProductDetailDto.getIsCommentable() != null)
@@ -88,10 +88,14 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public GeneralResponse delete(Integer id) {
         try {
-            productDetailRepository.deleteById(id);
-            return new GeneralResponse(false,
-                    "Product deleted successfully.",
-                    10200000);
+            Optional<ProductDetail> productDetail = productDetailRepository.findByProductId(id);
+            if(!productDetail.isEmpty()){
+                productDetailRepository.deleteById(productDetail.get().getId());
+                return new GeneralResponse(false,
+                        "Product deleted successfully.",
+                        10200000);
+            } else
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
         } catch (DataAccessException e){
             throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
         }
@@ -143,7 +147,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public GeneralResponse retrieve(Integer id) throws Exception {
         try {
-            Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
+            Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
             if (!optionalProduct.isEmpty())
                 return new GeneralResponse(false,
                         optionalProduct.get(),
@@ -162,7 +166,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             ProductDetail productDetail;
             List<Comment> comments;
             List<Vote> votes;
-            Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
+            Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
             if (!optionalProduct.isEmpty()) {
                 productDetail = optionalProduct.get();
                 if (!productDetail.getIsVisible())
@@ -216,7 +220,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public GeneralResponse comments(Integer id, Integer size, Long sync) {
         ProductDetail productDetail;
-        Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
+        Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
         if (!optionalProduct.isEmpty())
             productDetail = optionalProduct.get();
         else{
@@ -272,7 +276,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public GeneralResponse votes(Integer id, Integer size, Long sync) {
         ProductDetail productDetail;
-        Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
+        Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(id);
         if (!optionalProduct.isEmpty())
             productDetail = optionalProduct.get();
         else{
