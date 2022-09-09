@@ -1,6 +1,5 @@
 package com.seyfi.review.service;
 
-import com.seyfi.review.model.entity.ProductDetail;
 import com.seyfi.review.model.request.CreateProductDetailDto;
 import com.seyfi.review.model.request.UpdateProductDetailDto;
 import com.seyfi.review.model.response.GeneralResponse;

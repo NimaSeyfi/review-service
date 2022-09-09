@@ -1,7 +1,6 @@
 package com.seyfi.review.model.response;
 
 import com.seyfi.review.model.entity.Comment;
-import com.seyfi.review.model.entity.Vote;
 import lombok.Getter;
 import lombok.Setter;
 

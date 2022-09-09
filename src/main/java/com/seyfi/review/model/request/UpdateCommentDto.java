@@ -1,6 +1,7 @@
 package com.seyfi.review.model.request;
 
 import lombok.Getter;
+
 import javax.validation.constraints.Size;
 
 @Getter

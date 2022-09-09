@@ -1,6 +1,5 @@
 package com.seyfi.review.controller;
 
-import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.request.CreateCommentDto;
 import com.seyfi.review.model.request.UpdateCommentDto;
 import com.seyfi.review.model.response.GeneralResponse;
