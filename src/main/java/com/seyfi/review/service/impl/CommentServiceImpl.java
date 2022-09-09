@@ -6,12 +6,10 @@ import com.seyfi.review.exception.ApiError;
 import com.seyfi.review.exception.ErrorObject;
 import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.entity.ProductDetail;
-import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.request.CreateCommentDto;
 import com.seyfi.review.model.request.UpdateCommentDto;
 import com.seyfi.review.model.response.CommentPageResponse;
 import com.seyfi.review.model.response.GeneralResponse;
-import com.seyfi.review.model.response.VotePageResponse;
 import com.seyfi.review.service.CommentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static com.seyfi.review.utils.functions.check_product_is_commentable;
 

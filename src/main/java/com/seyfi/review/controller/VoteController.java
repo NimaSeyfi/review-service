@@ -1,12 +1,8 @@
 package com.seyfi.review.controller;
 
-import com.seyfi.review.model.entity.Comment;
-import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.request.CreateVoteDto;
-import com.seyfi.review.model.request.UpdateCommentDto;
 import com.seyfi.review.model.request.UpdateVoteDto;
 import com.seyfi.review.model.response.GeneralResponse;
-import com.seyfi.review.service.CommentService;
 import com.seyfi.review.service.VoteService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

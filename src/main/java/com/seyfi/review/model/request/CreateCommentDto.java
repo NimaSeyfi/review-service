@@ -3,7 +3,6 @@ package com.seyfi.review.model.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 @Getter
