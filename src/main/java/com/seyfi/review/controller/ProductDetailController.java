@@ -40,7 +40,7 @@ public class ProductDetailController {
     public ResponseEntity<GeneralResponse> update(@Valid @RequestBody UpdateProductDetailDto updateProductDetailDto,
                                                   @Positive(message = "id should be a positive number")
                                                   @NotNull(message = "id can't be null")
-                                                  @PathVariable Integer id)
+                                                  @PathVariable Long id)
             throws Exception {
         logger.info("Request for updating a productDetail : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.update(updateProductDetailDto, id);
@@ -50,7 +50,7 @@ public class ProductDetailController {
     @GetMapping("/{id}")
     public ResponseEntity<GeneralResponse> retrieve(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                        @PathVariable Integer id)
+                                                        @PathVariable Long id)
             throws Exception {
         logger.info("Request for retrieve a productDetail : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.retrieve(id);
@@ -60,7 +60,7 @@ public class ProductDetailController {
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse> delete(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                    @PathVariable Integer id)
+                                                    @PathVariable Long id)
             throws Exception {
         logger.info("Request for delete a productDetail : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.delete(id);
@@ -84,7 +84,7 @@ public class ProductDetailController {
     @GetMapping("/{id}/review")
     public ResponseEntity<GeneralResponse> review(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                    @PathVariable Integer id)
+                                                    @PathVariable Long id)
             throws Exception {
         logger.info("Request for retrieve a productDetail review : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.review(id);
@@ -94,7 +94,7 @@ public class ProductDetailController {
     @GetMapping("{id}/comments")
     public ResponseEntity<GeneralResponse> comments(@Positive(message = "id should be a positive number")
                                                         @NotNull(message = "id can't be null")
-                                                        @PathVariable Integer id,
+                                                        @PathVariable Long id,
                                                         @Positive(message = "size should be a positive number")
                                                         @NotNull(message = "size can't be null")
                                                         @RequestParam Integer size,
@@ -110,7 +110,7 @@ public class ProductDetailController {
     @GetMapping("{id}/votes")
     public ResponseEntity<GeneralResponse> votes(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                    @PathVariable Integer id,
+                                                    @PathVariable Long id,
                                                     @Positive(message = "size should be a positive number")
                                                     @NotNull(message = "size can't be null")
                                                     @RequestParam Integer size,

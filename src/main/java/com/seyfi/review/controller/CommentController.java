@@ -39,7 +39,7 @@ public class CommentController {
     public ResponseEntity<GeneralResponse> update(@Valid @RequestBody UpdateCommentDto updateCommentDto,
                                                   @Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                    @PathVariable Integer id)
+                                                    @PathVariable Long id)
             throws Exception {
         logger.info("Request for updating a comment : "+ id.toString());
         GeneralResponse generalResponse = commentService.update(updateCommentDto, id);
@@ -49,7 +49,7 @@ public class CommentController {
     @GetMapping("/{id}")
     public ResponseEntity<GeneralResponse> retrieve(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                        @PathVariable Integer id)
+                                                        @PathVariable Long id)
             throws Exception {
         logger.info("Request for retrieve a comment : "+ id.toString());
         GeneralResponse generalResponse = commentService.retrieve(id);
@@ -59,7 +59,7 @@ public class CommentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse> delete(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                    @PathVariable Integer id)
+                                                    @PathVariable Long id)
             throws Exception {
         logger.info("Request for delete a comment : "+ id.toString());
         GeneralResponse generalResponse = commentService.delete(id);
@@ -83,7 +83,7 @@ public class CommentController {
     @PatchMapping("/{id}/approve")
     public ResponseEntity<GeneralResponse> approve(@Positive(message = "id should be a positive number")
                                                   @NotNull(message = "id can't be null")
-                                                  @PathVariable Integer id)
+                                                  @PathVariable Long id)
             throws Exception {
         logger.info("Request for approve a comment : "+ id.toString());
         GeneralResponse generalResponse = commentService.approve(id);

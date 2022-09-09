@@ -11,8 +11,8 @@ import java.util.List;
 @Setter
 public class ReviewResponse {
 
-    private Integer id;
-    private Integer productId;
+    private Long id;
+    private Long productId;
     private Boolean isVisible;
     private Boolean isCommentable;
     private Boolean isVotable;

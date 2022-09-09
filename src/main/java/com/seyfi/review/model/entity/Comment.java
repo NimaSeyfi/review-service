@@ -21,7 +21,7 @@ public class Comment {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name="product_id", nullable=false)
@@ -32,7 +32,7 @@ public class Comment {
     @NotNull(message = "userId can't be null")
     @Column(name = "user_id", nullable = false)
     @Positive(message = "userId should be a positive number")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp

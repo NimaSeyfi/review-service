@@ -9,14 +9,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductDetailRepository extends CrudRepository<ProductDetail, Integer> {
+public interface ProductDetailRepository extends CrudRepository<ProductDetail, Long> {
 
-    boolean existsByProductId(Integer id);
+    boolean existsByProductId(Long id);
 
-    Optional<ProductDetail> findByProductId(Integer id);
+    Optional<ProductDetail> findByProductId(Long id);
+
+    Long deleteByProductId(Long id);
 
     List<ProductDetail> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<ProductDetail> findAllByCreatedAtBeforeOrderByCreatedAtDesc(Date createdAt, Pageable page);
+
 
 }

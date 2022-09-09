@@ -26,12 +26,12 @@ public class ProductDetail {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message = "productId can't be null")
     @Column(name = "product_id", nullable = false)
     @Positive(message = "productId should be a positive number")
-    private Integer productId;
+    private Long productId;
 
     @Column(name = "is_visible", nullable = false)
     private Boolean isVisible;

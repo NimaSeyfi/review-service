@@ -11,7 +11,7 @@ public class CreateProductDetailDto {
 
     @NotNull(message = "productId can't be null")
     @Positive(message = "productId should be a positive number")
-    private Integer productId;
+    private Long productId;
 
     private Boolean isVisible = true;
 

@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public GeneralResponse update(UpdateCommentDto updateCommentDto, Integer id) throws Exception {
+    public GeneralResponse update(UpdateCommentDto updateCommentDto, Long id) throws Exception {
         try {
             Optional<Comment> optionalComment = commentRepository.findById(id);
             if (!optionalComment.isEmpty()) {
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public GeneralResponse delete(Integer id) {
+    public GeneralResponse delete(Long id) {
         try {
             commentRepository.deleteById(id);
             return new GeneralResponse(false,
@@ -139,7 +139,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public GeneralResponse retrieve(Integer id) throws Exception {
+    public GeneralResponse retrieve(Long id) throws Exception {
         try {
             Optional<Comment> optionalComment = commentRepository.findById(id);
             if (!optionalComment.isEmpty())
@@ -155,7 +155,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public GeneralResponse approve(Integer id) throws Exception {
+    public GeneralResponse approve(Long id) throws Exception {
         try {
             Optional<Comment> optionalComment = commentRepository.findById(id);
             if (!optionalComment.isEmpty()) {

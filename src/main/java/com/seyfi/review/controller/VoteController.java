@@ -42,7 +42,7 @@ public class VoteController {
     public ResponseEntity<GeneralResponse> update(@Valid @RequestBody UpdateVoteDto updateVoteDto,
                                                   @Positive(message = "id should be a positive number")
                                                   @NotNull(message = "id can't be null")
-                                                  @PathVariable Integer id)
+                                                  @PathVariable Long id)
             throws Exception {
         logger.info("Request for updating a vote : "+ id.toString());
         GeneralResponse generalResponse = voteService.update(updateVoteDto, id);
@@ -52,7 +52,7 @@ public class VoteController {
     @GetMapping("/{id}")
     public ResponseEntity<GeneralResponse> retrieve(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                        @PathVariable Integer id)
+                                                        @PathVariable Long id)
             throws Exception {
         logger.info("Request for retrieve a vote : "+ id.toString());
         GeneralResponse generalResponse = voteService.retrieve(id);
@@ -62,7 +62,7 @@ public class VoteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<GeneralResponse> delete(@Positive(message = "id should be a positive number")
                                                     @NotNull(message = "id can't be null")
-                                                    @PathVariable Integer id)
+                                                    @PathVariable Long id)
             throws Exception {
         logger.info("Request for delete a vote : "+ id.toString());
         GeneralResponse generalResponse = voteService.delete(id);
@@ -86,7 +86,7 @@ public class VoteController {
     @PatchMapping("/{id}/approve")
     public ResponseEntity<GeneralResponse> approve(@Positive(message = "id should be a positive number")
                                                    @NotNull(message = "id can't be null")
-                                                   @PathVariable Integer id)
+                                                   @PathVariable Long id)
             throws Exception {
         logger.info("Request for approve a vote : "+ id.toString());
         GeneralResponse generalResponse = voteService.approve(id);

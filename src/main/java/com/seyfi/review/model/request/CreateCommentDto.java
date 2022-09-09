@@ -13,11 +13,11 @@ public class CreateCommentDto {
 
     @NotNull(message = "productId can't be null")
     @Positive(message = "productId should be a positive number")
-    private Integer productId;
+    private Long productId;
 
     @NotNull(message = "userId can't be null")
     @Positive(message = "userId should be a positive number")
-    private Integer userId;
+    private Long userId;
 
     @NotNull(message = "isCustomer can't be null")
     private Boolean isCustomer;

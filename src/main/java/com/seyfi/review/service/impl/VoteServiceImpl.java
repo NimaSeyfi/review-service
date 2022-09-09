@@ -70,7 +70,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public GeneralResponse update(UpdateVoteDto updateVoteDto, Integer id) throws Exception {
+    public GeneralResponse update(UpdateVoteDto updateVoteDto, Long id) throws Exception {
         try {
             Optional<Vote> optionalVote = voteRepository.findById(id);
             if (!optionalVote.isEmpty()) {
@@ -95,7 +95,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public GeneralResponse delete(Integer id) {
+    public GeneralResponse delete(Long id) {
         try {
             voteRepository.deleteById(id);
             return new GeneralResponse(false,
@@ -149,7 +149,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public GeneralResponse retrieve(Integer id) throws Exception {
+    public GeneralResponse retrieve(Long id) throws Exception {
         try {
             Optional<Vote> optionalVote = voteRepository.findById(id);
             if (!optionalVote.isEmpty())
@@ -165,7 +165,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public GeneralResponse approve(Integer id) throws Exception {
+    public GeneralResponse approve(Long id) throws Exception {
         try {
             Optional<Vote> optionalVote = voteRepository.findById(id);
             if (!optionalVote.isEmpty()) {

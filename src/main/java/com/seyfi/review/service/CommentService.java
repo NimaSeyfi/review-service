@@ -8,10 +8,10 @@ import com.seyfi.review.model.response.GeneralResponse;
 public interface CommentService {
 
     GeneralResponse create(CreateCommentDto createCommentDto  ) throws Exception;
-    GeneralResponse update(UpdateCommentDto updateCommentDto, Integer id) throws Exception;
-    GeneralResponse delete(Integer id);
+    GeneralResponse update(UpdateCommentDto updateCommentDto, Long id) throws Exception;
+    GeneralResponse delete(Long id);
     GeneralResponse list(Integer size, Long sync);
-    GeneralResponse retrieve(Integer id) throws Exception;
-    GeneralResponse approve(Integer id) throws Exception;
+    GeneralResponse retrieve(Long id) throws Exception;
+    GeneralResponse approve(Long id) throws Exception;
 
 }
