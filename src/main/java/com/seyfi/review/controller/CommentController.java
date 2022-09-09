@@ -2,6 +2,7 @@ package com.seyfi.review.controller;
 
 import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.request.CreateCommentDto;
+import com.seyfi.review.model.request.UpdateCommentDto;
 import com.seyfi.review.model.response.GeneralResponse;
 import com.seyfi.review.service.CommentService;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +32,17 @@ public class CommentController {
         logger.info("Request for creating a comment : "+comment.toString());
         GeneralResponse generalResponse = commentService.create(comment);
         logger.info("Response : "+ generalResponse.toString());
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<GeneralResponse> update(@Valid @RequestBody UpdateCommentDto updateCommentDto,
+                                                  @Positive(message = "id should be a positive number")
+                                                    @NotNull(message = "id can't be null")
+                                                    @PathVariable Integer id)
+            throws Exception {
+        logger.info("Request for updating a comment : "+ id.toString());
+        GeneralResponse generalResponse = commentService.update(updateCommentDto, id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 

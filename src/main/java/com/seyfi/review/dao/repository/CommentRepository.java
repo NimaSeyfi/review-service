@@ -13,10 +13,22 @@ public interface CommentRepository extends CrudRepository<Comment, Integer> {
 
     List<Comment> findAllByIsApprovedTrueAndProductDetail(ProductDetail productDetail);
 
-    List<Comment> findAllByIsApprovedTrueAndProductDetailAndProductDetailIsVisibleOrderByCreatedAtDesc(ProductDetail productDetail,
-                                                                                           Boolean product_isVisible);
+    List<Comment> findAllByIsApprovedTrueAndProductDetailAndIsCustomerTrueOrderByCreatedAtDesc(ProductDetail productDetail);
+
+    List<Comment> findAllByIsApprovedTrueAndProductDetailOrderByCreatedAtDesc(ProductDetail productDetail);
 
     List<Comment> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<Comment> findAllByCreatedAtBeforeOrderByCreatedAtDesc(Date createdAt, Pageable page);
+
+    List<Comment> findAllByProductDetailAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail, Pageable page);
+
+    List<Comment> findAllByProductDetailAndIsCustomerTrueAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail, Pageable page);
+
+    List<Comment> findAllByProductDetailAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail, Date createdAt,
+                                                                            Pageable page);
+
+    List<Comment> findAllByProductDetailAndIsCustomerTrueAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail,
+                                                                                             Date createdAt, Pageable page);
+
 }

@@ -1,5 +1,6 @@
 package com.seyfi.review.dao.repository;
 
+import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.entity.ProductDetail;
 import com.seyfi.review.model.entity.Vote;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,20 @@ public interface VoteRepository extends CrudRepository<Vote, Integer> {
 
     List<Vote> findAllByCreatedAtBeforeOrderByCreatedAtDesc(Date createdAt, Pageable page);
 
-    List<Vote> findAllByIsApprovedTrue();
+    List<Vote> findAllByIsApprovedTrueAndProductDetailAndIsCustomerTrueOrderByCreatedAtDesc(ProductDetail productDetail);
+
+    List<Vote> findAllByIsApprovedTrueAndProductDetailOrderByCreatedAtDesc(ProductDetail productDetail);
+
+
+
+    List<Vote> findAllByProductDetailAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail, Pageable page);
+
+    List<Vote> findAllByProductDetailAndIsCustomerTrueAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail, Pageable page);
+
+    List<Vote> findAllByProductDetailAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail, Date createdAt,
+                                                                                                Pageable page);
+
+    List<Vote> findAllByProductDetailAndIsCustomerTrueAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(ProductDetail productDetail,
+                                                                                                                 Date createdAt, Pageable page);
 
 }

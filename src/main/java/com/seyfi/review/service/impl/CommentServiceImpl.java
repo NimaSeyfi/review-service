@@ -61,7 +61,27 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public GeneralResponse update(UpdateCommentDto updateCommentDto, Integer id) throws Exception {
-        return null;
+        try {
+            Optional<Comment> optionalComment = commentRepository.findById(id);
+            if (!optionalComment.isEmpty()) {
+                Comment comment = optionalComment.get();
+                if (updateCommentDto.getIsCustomer() != null)
+                    comment.setIsCustomer(updateCommentDto.getIsCustomer());
+
+                if (updateCommentDto.getContent() != null)
+                    comment.setContent(updateCommentDto.getContent());
+
+                commentRepository.save(comment);
+                return new GeneralResponse(false,
+                        comment,
+                        10200000);
+
+            } else {
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+            }
+        } catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
     }
 
     @Override
@@ -122,7 +142,7 @@ public class CommentServiceImpl implements CommentService {
     public GeneralResponse retrieve(Integer id) throws Exception {
         try {
             Optional<Comment> optionalComment = commentRepository.findById(id);
-            if (optionalComment.isPresent())
+            if (!optionalComment.isEmpty())
                 return new GeneralResponse(false,
                         optionalComment.get(),
                         10200000);
@@ -138,7 +158,7 @@ public class CommentServiceImpl implements CommentService {
     public GeneralResponse approve(Integer id) throws Exception {
         try {
             Optional<Comment> optionalComment = commentRepository.findById(id);
-            if (optionalComment.isPresent()) {
+            if (!optionalComment.isEmpty()) {
                 Comment comment = optionalComment.get();
                 comment.setApprovedAt(new Date());
                 comment.setIsApproved(true);

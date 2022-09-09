@@ -9,10 +9,8 @@ import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.entity.ProductDetail;
 import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.request.CreateProductDetailDto;
-import com.seyfi.review.model.response.CommentPageResponse;
-import com.seyfi.review.model.response.GeneralResponse;
-import com.seyfi.review.model.response.ProductDetailPageResponse;
-import com.seyfi.review.model.response.ReviewResponse;
+import com.seyfi.review.model.request.UpdateProductDetailDto;
+import com.seyfi.review.model.response.*;
 import com.seyfi.review.service.ProductDetailService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,8 +55,34 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public GeneralResponse update(ProductDetail vote, Integer id) throws Exception {
-        return null;
+    public GeneralResponse update(UpdateProductDetailDto updateProductDetailDto, Integer id) throws Exception {
+        try {
+            Optional<ProductDetail> optionalProductDetail = productDetailRepository.findById(id);
+            if (!optionalProductDetail.isEmpty()) {
+                ProductDetail productDetail = optionalProductDetail.get();
+                if (updateProductDetailDto.getIsCommentable() != null)
+                    productDetail.setIsCommentable(updateProductDetailDto.getIsCommentable());
+
+                if (updateProductDetailDto.getIsPublic() != null)
+                    productDetail.setIsPublic(updateProductDetailDto.getIsPublic());
+
+                if (updateProductDetailDto.getIsVisible() != null)
+                    productDetail.setIsVisible(updateProductDetailDto.getIsVisible());
+
+                if (updateProductDetailDto.getIsVotable() != null)
+                    productDetail.setIsVotable(updateProductDetailDto.getIsVotable());
+
+                productDetailRepository.save(productDetail);
+                return new GeneralResponse(false,
+                        productDetail,
+                        10200000);
+
+            } else {
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+            }
+        } catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
     }
 
     @Override
@@ -120,7 +144,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     public GeneralResponse retrieve(Integer id) throws Exception {
         try {
             Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
-            if (optionalProduct.isPresent())
+            if (!optionalProduct.isEmpty())
                 return new GeneralResponse(false,
                         optionalProduct.get(),
                         10200000);
@@ -139,19 +163,29 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             List<Comment> comments;
             List<Vote> votes;
             Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
-            if (optionalProduct.isPresent()) {
+            if (!optionalProduct.isEmpty()) {
                 productDetail = optionalProduct.get();
                 if (!productDetail.getIsVisible())
                     throw new ApiError(ErrorObject.PRODUCT_INVISIBLE);
 
-                comments =
-                        commentRepository.
-                                findAllByIsApprovedTrueAndProductDetailAndProductDetailIsVisibleOrderByCreatedAtDesc(productDetail,
-                        true);
+                if (!productDetail.getIsPublic()) {
+                    comments =
+                            commentRepository.
+                                    findAllByIsApprovedTrueAndProductDetailAndIsCustomerTrueOrderByCreatedAtDesc(productDetail);
+                    votes =
+                            voteRepository.
+                                    findAllByIsApprovedTrueAndProductDetailAndIsCustomerTrueOrderByCreatedAtDesc(productDetail);
+                } else {
+                    comments =
+                            commentRepository.
+                                    findAllByIsApprovedTrueAndProductDetailOrderByCreatedAtDesc(productDetail);
+                    votes = voteRepository.
+                            findAllByIsApprovedTrueAndProductDetailOrderByCreatedAtDesc(productDetail);
+                }
+
                 if(comments.size() > 3)
                     comments = comments.subList(0,3);
 
-                votes = voteRepository.findAllByIsApprovedTrue();
                 Double voteAverage = votes.stream()
                         .mapToDouble(d -> d.getVote())
                         .average()
@@ -177,5 +211,116 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         } catch (NoSuchElementException e){
             throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
         }
+    }
+
+    @Override
+    public GeneralResponse comments(Integer id, Integer size, Long sync) {
+        ProductDetail productDetail;
+        Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
+        if (!optionalProduct.isEmpty())
+            productDetail = optionalProduct.get();
+        else{
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
+        ArrayList<Comment> comments;
+        CommentPageResponse commentPageResponse = new CommentPageResponse();
+        Timestamp timestamp;
+        Long timestamp_responsed;
+        if(sync == 0){
+            if (productDetail.getIsPublic())
+                comments = (ArrayList<Comment>) commentRepository.findAllByProductDetailAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        PageRequest.ofSize(size));
+            else
+                comments = (ArrayList<Comment>) commentRepository.findAllByProductDetailAndIsCustomerTrueAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        PageRequest.ofSize(size));
+            if (comments.size() != 0){
+                Date sync_date = comments.get(comments.size()-1).getCreatedAt();
+                timestamp = new Timestamp(sync_date.getTime());
+                timestamp_responsed = timestamp.getTime();
+            } else {
+                timestamp_responsed = null;
+            }
+        } else {
+            timestamp = new Timestamp(sync);
+            Date date = new Date(timestamp.getTime());
+            if (productDetail.getIsPublic())
+                comments = (ArrayList<Comment>) commentRepository.findAllByProductDetailAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        date,
+                        PageRequest.ofSize(size));
+            else
+                comments = (ArrayList<Comment>) commentRepository.findAllByProductDetailAndIsCustomerTrueAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        date,
+                        PageRequest.ofSize(size));
+            if (comments.size() != 0){
+                Date sync_date = comments.get(comments.size()-1).getCreatedAt();
+                timestamp = new Timestamp(sync_date.getTime());
+                timestamp_responsed = timestamp.getTime();
+            } else {
+                timestamp_responsed = null;
+            }
+        }
+        commentPageResponse.setComments(comments);
+        commentPageResponse.getPage().put("allCount", comments.size());
+        commentPageResponse.getPage().put("size", size);
+        commentPageResponse.getPage().put("sync", timestamp_responsed);
+        return new GeneralResponse(false,
+                commentPageResponse,
+                10200000);
+    }
+
+
+    @Override
+    public GeneralResponse votes(Integer id, Integer size, Long sync) {
+        ProductDetail productDetail;
+        Optional<ProductDetail> optionalProduct = productDetailRepository.findById(id);
+        if (!optionalProduct.isEmpty())
+            productDetail = optionalProduct.get();
+        else{
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
+        ArrayList<Vote> votes;
+        VotePageResponse votePageResponse = new VotePageResponse();
+        Timestamp timestamp;
+        Long timestamp_responsed;
+        if(sync == 0){
+            if (productDetail.getIsPublic())
+                votes = (ArrayList<Vote>) voteRepository.findAllByProductDetailAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        PageRequest.ofSize(size));
+            else
+                votes = (ArrayList<Vote>) voteRepository.findAllByProductDetailAndIsCustomerTrueAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        PageRequest.ofSize(size));
+            if (votes.size() != 0){
+                Date sync_date = votes.get(votes.size()-1).getCreatedAt();
+                timestamp = new Timestamp(sync_date.getTime());
+                timestamp_responsed = timestamp.getTime();
+            } else {
+                timestamp_responsed = null;
+            }
+        } else {
+            timestamp = new Timestamp(sync);
+            Date date = new Date(timestamp.getTime());
+            if (productDetail.getIsPublic())
+                votes = (ArrayList<Vote>) voteRepository.findAllByProductDetailAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        date,
+                        PageRequest.ofSize(size));
+            else
+                votes = (ArrayList<Vote>) voteRepository.findAllByProductDetailAndIsCustomerTrueAndCreatedAtBeforeAndIsApprovedTrueOrderByCreatedAtDesc(productDetail,
+                        date,
+                        PageRequest.ofSize(size));
+            if (votes.size() != 0){
+                Date sync_date = votes.get(votes.size()-1).getCreatedAt();
+                timestamp = new Timestamp(sync_date.getTime());
+                timestamp_responsed = timestamp.getTime();
+            } else {
+                timestamp_responsed = null;
+            }
+        }
+        votePageResponse.setVotes(votes);
+        votePageResponse.getPage().put("allCount", votes.size());
+        votePageResponse.getPage().put("size", size);
+        votePageResponse.getPage().put("sync", timestamp_responsed);
+        return new GeneralResponse(false,
+                votePageResponse,
+                10200000);
     }
 }

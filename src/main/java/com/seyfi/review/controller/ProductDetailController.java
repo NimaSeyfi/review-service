@@ -2,6 +2,8 @@ package com.seyfi.review.controller;
 
 import com.seyfi.review.model.entity.ProductDetail;
 import com.seyfi.review.model.request.CreateProductDetailDto;
+import com.seyfi.review.model.request.UpdateProductDetailDto;
+import com.seyfi.review.model.request.UpdateVoteDto;
 import com.seyfi.review.model.response.GeneralResponse;
 import com.seyfi.review.service.ProductDetailService;
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +30,20 @@ public class ProductDetailController {
     @PostMapping()
     public ResponseEntity<GeneralResponse> create(@Valid @RequestBody CreateProductDetailDto createProductDetailDto)
             throws Exception {
-        logger.info("Request for creating a product : "+ createProductDetailDto.toString());
+        logger.info("Request for creating a productDetail : "+ createProductDetailDto.toString());
         GeneralResponse generalResponse = productDetailService.create(createProductDetailDto);
         logger.info("Response : "+ generalResponse.toString());
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<GeneralResponse> update(@Valid @RequestBody UpdateProductDetailDto updateProductDetailDto,
+                                                  @Positive(message = "id should be a positive number")
+                                                  @NotNull(message = "id can't be null")
+                                                  @PathVariable Integer id)
+            throws Exception {
+        logger.info("Request for updating a productDetail : "+ id.toString());
+        GeneralResponse generalResponse = productDetailService.update(updateProductDetailDto, id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
@@ -39,7 +52,7 @@ public class ProductDetailController {
                                                     @NotNull(message = "id can't be null")
                                                         @PathVariable Integer id)
             throws Exception {
-        logger.info("Request for retrieve a product : "+ id.toString());
+        logger.info("Request for retrieve a productDetail : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.retrieve(id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
@@ -49,7 +62,7 @@ public class ProductDetailController {
                                                     @NotNull(message = "id can't be null")
                                                     @PathVariable Integer id)
             throws Exception {
-        logger.info("Request for delete a product : "+ id.toString());
+        logger.info("Request for delete a productDetail : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.delete(id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
@@ -63,7 +76,7 @@ public class ProductDetailController {
                                                     @NotNull(message = "sync can't be null")
                                                     @RequestParam Long sync)
             throws Exception {
-        logger.info("Request for retrieve all products");
+        logger.info("Request for retrieve all productDetails");
         GeneralResponse generalResponse = productDetailService.list(size, sync);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
@@ -73,21 +86,40 @@ public class ProductDetailController {
                                                     @NotNull(message = "id can't be null")
                                                     @PathVariable Integer id)
             throws Exception {
-        logger.info("Request for retrieve a product review : "+ id.toString());
+        logger.info("Request for retrieve a productDetail review : "+ id.toString());
         GeneralResponse generalResponse = productDetailService.review(id);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/comments")
-    public ResponseEntity<GeneralResponse> comments(@Positive(message = "size should be a positive number")
-                                                @NotNull(message = "size can't be null")
-                                                @RequestParam Integer size,
-                                                @Positive(message = "sync should be a positive number")
-                                                @NotNull(message = "sync can't be null")
-                                                @RequestParam Long sync)
+    @GetMapping("{id}/comments")
+    public ResponseEntity<GeneralResponse> comments(@Positive(message = "id should be a positive number")
+                                                        @NotNull(message = "id can't be null")
+                                                        @PathVariable Integer id,
+                                                        @Positive(message = "size should be a positive number")
+                                                        @NotNull(message = "size can't be null")
+                                                        @RequestParam Integer size,
+                                                        @Positive(message = "sync should be a positive number")
+                                                        @NotNull(message = "sync can't be null")
+                                                        @RequestParam Long sync)
             throws Exception {
-        logger.info("Request for retrieve all products");
-        GeneralResponse generalResponse = productDetailService.list(size, sync);
+        logger.info("Request for retrieve all productDetail comments");
+        GeneralResponse generalResponse = productDetailService.comments(id, size, sync);
+        return new ResponseEntity<>(generalResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("{id}/votes")
+    public ResponseEntity<GeneralResponse> votes(@Positive(message = "id should be a positive number")
+                                                    @NotNull(message = "id can't be null")
+                                                    @PathVariable Integer id,
+                                                    @Positive(message = "size should be a positive number")
+                                                    @NotNull(message = "size can't be null")
+                                                    @RequestParam Integer size,
+                                                    @Positive(message = "sync should be a positive number")
+                                                    @NotNull(message = "sync can't be null")
+                                                    @RequestParam Long sync)
+            throws Exception {
+        logger.info("Request for retrieve all productDetail votes");
+        GeneralResponse generalResponse = productDetailService.votes(id, size, sync);
         return new ResponseEntity<>(generalResponse, HttpStatus.OK);
     }
 

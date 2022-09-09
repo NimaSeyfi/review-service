@@ -4,9 +4,12 @@ import com.seyfi.review.dao.repository.ProductDetailRepository;
 import com.seyfi.review.dao.repository.VoteRepository;
 import com.seyfi.review.exception.ApiError;
 import com.seyfi.review.exception.ErrorObject;
+import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.entity.ProductDetail;
 import com.seyfi.review.model.entity.Vote;
 import com.seyfi.review.model.request.CreateVoteDto;
+import com.seyfi.review.model.request.UpdateCommentDto;
+import com.seyfi.review.model.request.UpdateVoteDto;
 import com.seyfi.review.model.response.GeneralResponse;
 import com.seyfi.review.model.response.VotePageResponse;
 import com.seyfi.review.service.VoteService;
@@ -67,8 +70,28 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public GeneralResponse update(Vote vote, Integer id) throws Exception {
-        return null;
+    public GeneralResponse update(UpdateVoteDto updateVoteDto, Integer id) throws Exception {
+        try {
+            Optional<Vote> optionalVote = voteRepository.findById(id);
+            if (!optionalVote.isEmpty()) {
+                Vote vote = optionalVote.get();
+                if (updateVoteDto.getIsCustomer() != null)
+                    vote.setIsCustomer(updateVoteDto.getIsCustomer());
+
+                if (updateVoteDto.getVote() != null)
+                    vote.setVote(updateVoteDto.getVote());
+
+                voteRepository.save(vote);
+                return new GeneralResponse(false,
+                        vote,
+                        10200000);
+
+            } else {
+                throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+            }
+        } catch (NoSuchElementException e){
+            throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
+        }
     }
 
     @Override
@@ -129,7 +152,7 @@ public class VoteServiceImpl implements VoteService {
     public GeneralResponse retrieve(Integer id) throws Exception {
         try {
             Optional<Vote> optionalVote = voteRepository.findById(id);
-            if (optionalVote.isPresent())
+            if (!optionalVote.isEmpty())
                 return new GeneralResponse(false,
                         optionalVote.get(),
                         10200000);
@@ -145,7 +168,7 @@ public class VoteServiceImpl implements VoteService {
     public GeneralResponse approve(Integer id) throws Exception {
         try {
             Optional<Vote> optionalVote = voteRepository.findById(id);
-            if (optionalVote.isPresent()) {
+            if (!optionalVote.isEmpty()) {
                 Vote vote = optionalVote.get();
                 vote.setApprovedAt(new Date());
                 vote.setIsApproved(true);
