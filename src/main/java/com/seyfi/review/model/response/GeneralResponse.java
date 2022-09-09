@@ -14,7 +14,7 @@ import lombok.Setter;
 public class GeneralResponse {
     private Boolean error;
     private Object message;
-    private Integer result_number;
+    private Integer result_code;
     private Long sync;
 
     @Override
@@ -22,14 +22,14 @@ public class GeneralResponse {
         return "GeneralResponse{" +
                 "error=" + error +
                 ", message=" + message +
-                ", result_number=" + result_number +
+                ", result_code=" + result_code +
                 '}';
     }
 
-    public GeneralResponse(Boolean error, Object message, Integer result_number){
+    public GeneralResponse(Boolean error, Object message, Integer result_code){
         this.error=error;
         this.message=message;
-        this.result_number=result_number;
+        this.result_code=result_code;
     }
 
 }

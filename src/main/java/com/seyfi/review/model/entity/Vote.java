@@ -1,6 +1,9 @@
 package com.seyfi.review.model.entity;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,13 +13,13 @@ import javax.validation.constraints.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "comment_table")
+@Table(name = "vote_table")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Comment {
+public class Vote {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -24,6 +27,7 @@ public class Comment {
     private Integer id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="product_id", nullable=false)
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="productId")
     @JsonIdentityReference(alwaysAsId=true)
@@ -33,6 +37,16 @@ public class Comment {
     @Column(name = "user_id", nullable = false)
     @Positive(message = "userId should be a positive number")
     private Integer userId;
+
+    @NotNull(message = "isCustomer can't be null")
+    @Column(name = "is_customer", nullable = false)
+    private Boolean isCustomer ;
+
+    @Min(value = 0, message = "minimum value of vote is 0")
+    @Max(value = 10, message = "maximum value of vote is 10")
+    @NotNull(message = "vote can't be null")
+    @Column(name = "vote", nullable = false)
+    private Integer vote;
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp
@@ -47,16 +61,5 @@ public class Comment {
 
     @Column(name = "is_approved", nullable = false)
     private Boolean isApproved = false;
-
-    @NotNull(message = "isCustomer can't be null")
-    @Column(name = "is_customer", nullable = false)
-    private Boolean isCustomer ;
-
-    @NotNull(message = "message content can't be null")
-    @NotBlank(message = "content can't be blank")
-    @NotEmpty(message = "content can't be empty")
-    @Size(min = 1, max = 500, message = "comment content size should fit in 1 to 500 characters")
-    @Column(name = "content", nullable = false, length = 500)
-    private String content;
 
 }

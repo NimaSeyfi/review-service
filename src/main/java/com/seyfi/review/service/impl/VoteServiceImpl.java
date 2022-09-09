@@ -1,79 +1,89 @@
 package com.seyfi.review.service.impl;
 
-import com.seyfi.review.dao.repository.CommentRepository;
 import com.seyfi.review.dao.repository.ProductDetailRepository;
+import com.seyfi.review.dao.repository.VoteRepository;
 import com.seyfi.review.exception.ApiError;
 import com.seyfi.review.exception.ErrorObject;
 import com.seyfi.review.model.entity.Comment;
 import com.seyfi.review.model.entity.ProductDetail;
 import com.seyfi.review.model.entity.Vote;
-import com.seyfi.review.model.request.CreateCommentDto;
+import com.seyfi.review.model.request.CreateVoteDto;
 import com.seyfi.review.model.request.UpdateCommentDto;
-import com.seyfi.review.model.response.CommentPageResponse;
+import com.seyfi.review.model.request.UpdateVoteDto;
 import com.seyfi.review.model.response.GeneralResponse;
 import com.seyfi.review.model.response.VotePageResponse;
-import com.seyfi.review.service.CommentService;
+import com.seyfi.review.service.VoteService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static com.seyfi.review.utils.functions.check_product_is_commentable;
+import static com.seyfi.review.utils.functions.check_product_is_votable;
 
 @Service
-public class CommentServiceImpl implements CommentService {
+public class VoteServiceImpl implements VoteService {
 
-    private static final Logger logger = LogManager.getLogger(CommentServiceImpl.class);
+    private static final Logger logger = LogManager.getLogger(VoteServiceImpl.class);
 
     @Autowired
-    CommentRepository commentRepository;
+    VoteRepository voteRepository;
 
     @Autowired
     ProductDetailRepository productDetailRepository;
 
     @Override
-    public GeneralResponse create(CreateCommentDto createCommentDto) throws Exception {
+    public GeneralResponse create(CreateVoteDto createVoteDto) throws Exception {
         ProductDetail productDetail;
         try {
-            Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(createCommentDto.getProductId());
+            Optional<ProductDetail> optionalProduct = productDetailRepository.findByProductId(createVoteDto.getProductId());
             productDetail = optionalProduct.get();
         }catch (NoSuchElementException e){
             throw new ApiError(ErrorObject.PRODUCT_DOESNT_EXIST);
         }
+        check_product_is_votable(productDetail, createVoteDto);
 
-        check_product_is_commentable(productDetail, createCommentDto);
-
-        Comment comment = new Comment();
-        comment.setContent(createCommentDto.getContent());
-        comment.setUserId(createCommentDto.getUserId());
-        comment.setIsCustomer(createCommentDto.getIsCustomer());
-        comment.setProductDetail(productDetail);
-        commentRepository.save(comment);
+        Vote vote;
+        try {
+            Optional<Vote> optionalVote = voteRepository.findByUserIdAndProductDetail(createVoteDto.getUserId(),
+                    productDetail);
+            vote = optionalVote.get();
+        }catch (NoSuchElementException e){
+            vote = new Vote();
+        }
+        vote.setUserId(createVoteDto.getUserId());
+        vote.setIsCustomer(createVoteDto.getIsCustomer());
+        vote.setVote(createVoteDto.getVote());
+        vote.setProductDetail(productDetail);
+        voteRepository.save(vote);
         return new GeneralResponse(false,
-                comment,
+                vote,
                 10200000);
     }
 
     @Override
-    public GeneralResponse update(UpdateCommentDto updateCommentDto, Integer id) throws Exception {
+    public GeneralResponse update(UpdateVoteDto updateVoteDto, Integer id) throws Exception {
         try {
-            Optional<Comment> optionalComment = commentRepository.findById(id);
-            if (!optionalComment.isEmpty()) {
-                Comment comment = optionalComment.get();
-                if (updateCommentDto.getIsCustomer() != null)
-                    comment.setIsCustomer(updateCommentDto.getIsCustomer());
+            Optional<Vote> optionalVote = voteRepository.findById(id);
+            if (!optionalVote.isEmpty()) {
+                Vote vote = optionalVote.get();
+                if (updateVoteDto.getIsCustomer() != null)
+                    vote.setIsCustomer(updateVoteDto.getIsCustomer());
 
-                if (updateCommentDto.getContent() != null)
-                    comment.setContent(updateCommentDto.getContent());
+                if (updateVoteDto.getVote() != null)
+                    vote.setVote(updateVoteDto.getVote());
 
-                commentRepository.save(comment);
+                voteRepository.save(vote);
                 return new GeneralResponse(false,
-                        comment,
+                        vote,
                         10200000);
 
             } else {
@@ -87,9 +97,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public GeneralResponse delete(Integer id) {
         try {
-            commentRepository.deleteById(id);
+            voteRepository.deleteById(id);
             return new GeneralResponse(false,
-                    "Comment deleted successfully.",
+                    "Vote deleted successfully.",
                     10200000);
         } catch (DataAccessException e){
             throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
@@ -99,14 +109,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public GeneralResponse list(Integer size, Long sync) {
         try {
-            ArrayList<Comment> comments;
-            CommentPageResponse commentPageResponse = new CommentPageResponse();
+            ArrayList<Vote> votes;
+            VotePageResponse votePageResponse = new VotePageResponse();
             Timestamp timestamp;
             Long timestamp_responsed;
             if(sync == 0){
-                comments = (ArrayList<Comment>) commentRepository.findAllByOrderByCreatedAtDesc(PageRequest.ofSize(size));
-                if (comments.size() != 0){
-                    Date sync_date = comments.get(comments.size()-1).getCreatedAt();
+                votes = (ArrayList<Vote>) voteRepository.findAllByOrderByCreatedAtDesc(PageRequest.ofSize(size));
+                if (votes.size() != 0){
+                    Date sync_date = votes.get(votes.size()-1).getCreatedAt();
                     timestamp = new Timestamp(sync_date.getTime());
                     timestamp_responsed = timestamp.getTime();
                 } else {
@@ -115,22 +125,22 @@ public class CommentServiceImpl implements CommentService {
             } else {
                 timestamp = new Timestamp(sync);
                 Date date = new Date(timestamp.getTime());
-                comments = (ArrayList<Comment>) commentRepository.findAllByCreatedAtBeforeOrderByCreatedAtDesc(date,
+                votes = (ArrayList<Vote>) voteRepository.findAllByCreatedAtBeforeOrderByCreatedAtDesc(date,
                         PageRequest.ofSize(size));
-                if (comments.size() != 0){
-                    Date sync_date = comments.get(comments.size()-1).getCreatedAt();
+                if (votes.size() != 0){
+                    Date sync_date = votes.get(votes.size()-1).getCreatedAt();
                     timestamp = new Timestamp(sync_date.getTime());
                     timestamp_responsed = timestamp.getTime();
                 } else {
                     timestamp_responsed = null;
                 }
             }
-            commentPageResponse.setComments(comments);
-            commentPageResponse.getPage().put("allCount", commentRepository.count());
-            commentPageResponse.getPage().put("size", size);
-            commentPageResponse.getPage().put("sync", timestamp_responsed);
+            votePageResponse.setVotes(votes);
+            votePageResponse.getPage().put("allCount", voteRepository.count());
+            votePageResponse.getPage().put("size", size);
+            votePageResponse.getPage().put("sync", timestamp_responsed);
             return new GeneralResponse(false,
-                    commentPageResponse,
+                    votePageResponse,
                     10200000);
         } catch (Exception e){
             logger.error(e);
@@ -141,10 +151,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public GeneralResponse retrieve(Integer id) throws Exception {
         try {
-            Optional<Comment> optionalComment = commentRepository.findById(id);
-            if (!optionalComment.isEmpty())
+            Optional<Vote> optionalVote = voteRepository.findById(id);
+            if (!optionalVote.isEmpty())
                 return new GeneralResponse(false,
-                        optionalComment.get(),
+                        optionalVote.get(),
                         10200000);
             else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);
@@ -157,14 +167,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public GeneralResponse approve(Integer id) throws Exception {
         try {
-            Optional<Comment> optionalComment = commentRepository.findById(id);
-            if (!optionalComment.isEmpty()) {
-                Comment comment = optionalComment.get();
-                comment.setApprovedAt(new Date());
-                comment.setIsApproved(true);
-                commentRepository.save(comment);
+            Optional<Vote> optionalVote = voteRepository.findById(id);
+            if (!optionalVote.isEmpty()) {
+                Vote vote = optionalVote.get();
+                vote.setApprovedAt(new Date());
+                vote.setIsApproved(true);
+                voteRepository.save(vote);
                 return new GeneralResponse(false,
-                        comment,
+                        vote,
                         10200000);
             }else{
                 throw new ApiError(ErrorObject.RESOURCE_NOT_FOUND);

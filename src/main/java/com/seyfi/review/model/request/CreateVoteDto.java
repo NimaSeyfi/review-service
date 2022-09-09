@@ -3,12 +3,11 @@ package com.seyfi.review.model.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 @Getter
 @AllArgsConstructor
-public class CreateCommentDto {
+public class CreateVoteDto {
 
 
     @NotNull(message = "productId can't be null")
@@ -22,10 +21,9 @@ public class CreateCommentDto {
     @NotNull(message = "isCustomer can't be null")
     private Boolean isCustomer;
 
-    @NotNull(message = "message content can't be null")
-    @NotBlank(message = "content can't be blank")
-    @NotEmpty(message = "content can't be empty")
-    @Size(min = 1, max = 500, message = "comment content size should fit in 1 to 500 characters")
-    private String content;
+    @Min(value = 0, message = "minimum value of vote is 0")
+    @Max(value = 10, message = "maximum value of vote is 10")
+    @NotNull(message = "vote can't be null")
+    private Integer vote;
 
 }
